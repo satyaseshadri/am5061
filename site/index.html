@@ -1,0 +1,72 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Course notebooks</title><style>
+:root{--navy:#1F3864;--orange:#ED7D31;--muted:#59626E;--line:#e6eaf0;--bg:#fff;--panel:#F8FAFC}
+@media(prefers-color-scheme:dark){:root{--navy:#8FB3E8;--muted:#9AA4B2;--line:#2a2f38;--bg:#14171c;--panel:#1b1f26}}
+*{box-sizing:border-box}
+body{margin:0;font-family:Calibri,Carlito,system-ui,-apple-system,sans-serif;
+  color:#1a1a1a;background:var(--bg);line-height:1.55}
+@media(prefers-color-scheme:dark){body{color:#e7eaee}}
+.wrap{max-width:980px;margin:0 auto;padding:26px 18px 60px}
+header{border-bottom:2px solid var(--navy);padding-bottom:14px;margin-bottom:22px}
+.eyebrow{color:var(--orange);font-weight:700;font-size:12px;letter-spacing:.12em}
+h1{color:var(--navy);font-size:30px;margin:6px 0 4px;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:15px}
+h2{color:var(--navy);font-size:20px;margin:34px 0 10px}
+.note{background:#FDF3EC;border-left:4px solid var(--orange);padding:13px 15px;margin:18px 0;font-size:15px}
+@media(prefers-color-scheme:dark){.note{background:#2a2119}}
+.grid{display:grid;gap:11px}
+.card{border:1px solid var(--line);border-radius:7px;padding:13px 15px;background:var(--panel);
+  display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.num{font-weight:700;color:var(--navy);font-size:22px;min-width:34px}
+.body{flex:1 1 320px;min-width:0}
+.t{font-weight:600;color:var(--navy)}
+.d{color:var(--muted);font-size:14px}
+a.btn{display:inline-block;background:var(--orange);color:#fff;text-decoration:none;
+  padding:8px 15px;border-radius:5px;font-size:14px;white-space:nowrap;font-weight:600}
+a.btn:hover{background:#d86d24}
+a.ghost{background:transparent;color:var(--navy);border:1px solid var(--line);font-weight:600}
+footer{margin-top:46px;padding-top:14px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:13px}
+code{background:var(--panel);padding:2px 5px;border-radius:3px;font-size:13px}
+</style></head><body><div class="wrap">
+<header><div class="eyebrow">AM5061 &middot; DESIGN OF THERMAL AND FLUID SYSTEMS</div>
+<h1>Course notebooks</h1>
+<div class="sub">Applied Mechanics &amp; Biomedical Engineering &middot; IIT Madras &middot; Jul&ndash;Nov 2026</div>
+</header>
+
+<div class="note"><b>New here? Read <a href="docs/AM5061_Guide1_GettingStarted.pdf">Getting started</a> first.</b><br>
+Every case runs in your browser through Google Colab. Sign in with your
+<code>@smail.iitm.ac.in</code> account. Nothing to install &mdash; no Python, no Anaconda.
+<br><br><b>Before you change a notebook: File &rarr; Save a copy in Drive.</b>
+The originals are read-only, so work on your own copy.</div>
+
+<h2>The fourteen cases</h2>
+<div class="grid"><div class="card"><div class="num">1</div><div class="body"><div class="t">The 28 kW dairy pasteurisation heat pump</div><div class="d">State points, COP, mass flow. Where the whole course starts.</div></div><a class="btn" href="https://colab.research.google.com/github/satyaseshadri/am5061/blob/main/notebooks/Week01_HeatPump.ipynb" target="_blank" rel="noopener">Open in Colab</a><a class="btn ghost" href="https://github.com/satyaseshadri/am5061/blob/main/notebooks/Week01_HeatPump.ipynb" target="_blank" rel="noopener">View source</a></div>
+<div class="card"><div class="num">2</div><div class="body"><div class="t">Chilled-water distribution, 500 TR campus plant</div><div class="d">Pump curve against system curve. Throttle or slow down?</div></div><a class="btn" href="https://colab.research.google.com/github/satyaseshadri/am5061/blob/main/notebooks/Week02_Hydraulics.ipynb" target="_blank" rel="noopener">Open in Colab</a><a class="btn ghost" href="https://github.com/satyaseshadri/am5061/blob/main/notebooks/Week02_Hydraulics.ipynb" target="_blank" rel="noopener">View source</a></div>
+<div class="card"><div class="num">3</div><div class="body"><div class="t">Cooling tower, Chennai data centre</div><div class="d">Wet bulb, Merkel, and whether the setpoint is buildable at all.</div></div><a class="btn" href="https://colab.research.google.com/github/satyaseshadri/am5061/blob/main/notebooks/Week03_CoolingTower.ipynb" target="_blank" rel="noopener">Open in Colab</a><a class="btn ghost" href="https://github.com/satyaseshadri/am5061/blob/main/notebooks/Week03_CoolingTower.ipynb" target="_blank" rel="noopener">View source</a></div>
+<div class="card"><div class="num">4</div><div class="body"><div class="t">Steam header insulation, Tiruppur mill</div><div class="d">Thickness, surface temperature, and the critical radius.</div></div><a class="btn" href="https://colab.research.google.com/github/satyaseshadri/am5061/blob/main/notebooks/Week04_Insulation.ipynb" target="_blank" rel="noopener">Open in Colab</a><a class="btn ghost" href="https://github.com/satyaseshadri/am5061/blob/main/notebooks/Week04_Insulation.ipynb" target="_blank" rel="noopener">View source</a></div>
+<div class="card"><div class="num">5</div><div class="body"><div class="t">Waterwall tube, 20 TPH bagasse boiler</div><div class="d">Two-phase flow, Chen, and the deposit thickness that kills a tube.</div></div><a class="btn" href="https://colab.research.google.com/github/satyaseshadri/am5061/blob/main/notebooks/Week05_Waterwall.ipynb" target="_blank" rel="noopener">Open in Colab</a><a class="btn ghost" href="https://github.com/satyaseshadri/am5061/blob/main/notebooks/Week05_Waterwall.ipynb" target="_blank" rel="noopener">View source</a></div>
+<div class="card"><div class="num">6</div><div class="body"><div class="t">Condenser of a 10 kW heat pump</div><div class="d">Three zones, three coefficients. What averaging them costs you.</div></div><a class="btn" href="https://colab.research.google.com/github/satyaseshadri/am5061/blob/main/notebooks/Week06_Condenser.ipynb" target="_blank" rel="noopener">Open in Colab</a><a class="btn ghost" href="https://github.com/satyaseshadri/am5061/blob/main/notebooks/Week06_Condenser.ipynb" target="_blank" rel="noopener">View source</a></div>
+<div class="card"><div class="num">7</div><div class="body"><div class="t">Liquid cooling, 50 kW GPU rack</div><div class="d">Discretised counter-flow. How many segments are enough?</div></div><a class="btn" href="https://colab.research.google.com/github/satyaseshadri/am5061/blob/main/notebooks/Week07_HeatExchanger.ipynb" target="_blank" rel="noopener">Open in Colab</a><a class="btn ghost" href="https://github.com/satyaseshadri/am5061/blob/main/notebooks/Week07_HeatExchanger.ipynb" target="_blank" rel="noopener">View source</a></div>
+<div class="card"><div class="num">8</div><div class="body"><div class="t">Waste-heat recovery boiler, cement kiln</div><div class="d">Effectiveness-NTU, and why phase change makes life easy.</div></div><a class="btn" href="https://colab.research.google.com/github/satyaseshadri/am5061/blob/main/notebooks/Week08_WHRBoiler.ipynb" target="_blank" rel="noopener">Open in Colab</a><a class="btn ghost" href="https://github.com/satyaseshadri/am5061/blob/main/notebooks/Week08_WHRBoiler.ipynb" target="_blank" rel="noopener">View source</a></div>
+<div class="card"><div class="num">9</div><div class="body"><div class="t">Shell-and-tube condenser</div><div class="d">From duty to a drawing. Design as a fixed-point problem.</div></div><a class="btn" href="https://colab.research.google.com/github/satyaseshadri/am5061/blob/main/notebooks/Week09_ShellAndTube.ipynb" target="_blank" rel="noopener">Open in Colab</a><a class="btn ghost" href="https://github.com/satyaseshadri/am5061/blob/main/notebooks/Week09_ShellAndTube.ipynb" target="_blank" rel="noopener">View source</a></div>
+<div class="card"><div class="num">10</div><div class="body"><div class="t">Bagasse cogeneration, 3500 TCD sugar mill</div><div class="d">Steam balance, export power, and the Stodola ellipse.</div></div><a class="btn" href="https://colab.research.google.com/github/satyaseshadri/am5061/blob/main/notebooks/Week10_Cogeneration.ipynb" target="_blank" rel="noopener">Open in Colab</a><a class="btn ghost" href="https://github.com/satyaseshadri/am5061/blob/main/notebooks/Week10_Cogeneration.ipynb" target="_blank" rel="noopener">View source</a></div>
+<div class="card"><div class="num">11</div><div class="body"><div class="t">Transcritical CO2 booster</div><div class="d">No condenser. Find the optimum gas-cooler pressure.</div></div><a class="btn" href="https://colab.research.google.com/github/satyaseshadri/am5061/blob/main/notebooks/Week11_CO2Booster.ipynb" target="_blank" rel="noopener">Open in Colab</a><a class="btn ghost" href="https://github.com/satyaseshadri/am5061/blob/main/notebooks/Week11_CO2Booster.ipynb" target="_blank" rel="noopener">View source</a></div>
+<div class="card"><div class="num">12</div><div class="body"><div class="t">Solar LiBr absorption chiller</div><div class="d">COP 0.8, and why anyone would build it anyway.</div></div><a class="btn" href="https://colab.research.google.com/github/satyaseshadri/am5061/blob/main/notebooks/Week12_AbsorptionChiller.ipynb" target="_blank" rel="noopener">Open in Colab</a><a class="btn ghost" href="https://github.com/satyaseshadri/am5061/blob/main/notebooks/Week12_AbsorptionChiller.ipynb" target="_blank" rel="noopener">View source</a></div>
+<div class="card"><div class="num">13</div><div class="body"><div class="t">ORC on cement kiln waste heat</div><div class="d">How a design code converges. And how it lies to you.</div></div><a class="btn" href="https://colab.research.google.com/github/satyaseshadri/am5061/blob/main/notebooks/Week13_ORC.ipynb" target="_blank" rel="noopener">Open in Colab</a><a class="btn ghost" href="https://github.com/satyaseshadri/am5061/blob/main/notebooks/Week13_ORC.ipynb" target="_blank" rel="noopener">View source</a></div>
+<div class="card"><div class="num">14</div><div class="body"><div class="t">Plant-level audit</div><div class="d">Sankey, exergy, rupees per kWh, kilograms of CO2.</div></div><a class="btn" href="https://colab.research.google.com/github/satyaseshadri/am5061/blob/main/notebooks/Week14_PlantAudit.ipynb" target="_blank" rel="noopener">Open in Colab</a><a class="btn ghost" href="https://github.com/satyaseshadri/am5061/blob/main/notebooks/Week14_PlantAudit.ipynb" target="_blank" rel="noopener">View source</a></div></div>
+
+<h2>Guides</h2>
+<div class="grid"><div class="card"><div class="body"><div class="t">Getting started with Colab and Python</div><div class="d">Read this before Week 1. Fifteen minutes.</div></div><a class="btn ghost" href="docs/AM5061_Guide1_GettingStarted.pdf" target="_blank" rel="noopener">Read (PDF)</a></div>
+<div class="card"><div class="body"><div class="t">am5061.py reference</div><div class="d">Every class and function in the shared module.</div></div><a class="btn ghost" href="docs/AM5061_Guide2_ModuleReference.pdf" target="_blank" rel="noopener">Read (PDF)</a></div>
+<div class="card"><div class="body"><div class="t">Numerical methods for thermal design</div><div class="d">Which solver to reach for, and how to tell when it has lied to you.</div></div><a class="btn ghost" href="docs/AM5061_Guide3_NumericalMethods.pdf" target="_blank" rel="noopener">Read (PDF)</a></div></div>
+
+<h2>Submitting</h2>
+<div class="note">Each deliverable has its own upload form. Sign in with your
+IIT Madras Google account so your submission is recorded against your roll number.
+<br><br><i>Form links are added here once the forms are created.</i></div>
+
+<footer>Prof. Satyanarayanan Seshadri &middot; Applied Mechanics, IIT Madras.
+Notebooks open in Google Colab; nothing needs installing.</footer>
+</div></body></html>
