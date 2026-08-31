@@ -17,10 +17,15 @@ properly because a file-upload question forces a Google sign-in.
 
 ---
 
-## Edit 1 — add a file
+## Edit 1 — add a SERVER file
 
-Files → **+** → **Script** → name it `Submit`. Paste in `Submit.gs` from this
-folder.
+Files → **+** → **Script** → name it **`FormLinks`**. Paste in `FormLinks.gs`
+from this folder.
+
+> **This file holds server code only.** It must contain nothing but
+> `getFormLinks_()` and `refreshFormLinks()`. If you paste the browser code from
+> Edit 3 in here you get `ReferenceError: B is not defined` — `B` is a
+> client-side variable that only exists inside `Portal_v2.html`.
 
 ## Edit 2 — Code.gs, one line
 
@@ -38,6 +43,9 @@ Add one line immediately above it:
 ```
 
 ## Edit 3 — Portal_v2.html, replace the Submit block
+
+> **This goes in `Portal_v2.html`, NOT in a `.gs` file.** It runs in the
+> student's browser and uses `B`, the payload the server sends to the page.
 
 Find the block starting at about **line 340**:
 
