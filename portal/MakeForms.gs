@@ -1,35 +1,41 @@
 /**
  * AM5061 — submission forms, without the portal.
  *
- * WHY THIS EXISTS
+ * WHY FORMS AND NOT THE PORTAL
  * The Apps Script portal identifies students with
- * Session.getActiveUser().getEmail(). On a PERSONAL Google account that call
- * returns an empty string for anyone outside the owner's domain, so the roster
- * never matches and submissions cannot be attributed. That is a documented
- * Apps Script privacy restriction, not a bug in Code.gs.
+ * Session.getActiveUser().getEmail(). On a PERSONAL Google account that returns
+ * an empty string for anyone outside the owner's domain, so the roster never
+ * matches. A Forms FILE UPLOAD question requires the respondent to sign in and
+ * records the account they used, so it works where the portal cannot.
  *
- * Google Forms does not have that problem. A file-upload question REQUIRES the
- * respondent to sign in to Google, and the response records the account they
- * signed in with. So this works today, on the account the course already lives
- * on, with no migration.
+ * WHY A TEMPLATE
+ * Apps Script CANNOT create a file-upload question. There is no
+ * addFileUploadItem(). FileUploadItem exists only for reading a form that
+ * already has one. So you build ONE form by hand, and this script clones it
+ * fourteen times — a copy preserves the upload question.
  *
- * WHAT YOU GET
- *   - one form per deliverable, D-1 to D-14
- *   - uploads land in YOUR Drive; students cannot see each other's work
- *   - one responses spreadsheet in 00_Admin, one tab per deliverable
- *   - a printed list of form links to paste into the course index
+ * ── STEP 1, ONCE, BY HAND ─────────────────────────────────────────────
+ * 1. forms.google.com → Blank form
+ * 2. Title it exactly:   AM5061 Submission TEMPLATE
+ * 3. Settings (gear) → Responses → turn ON "Collect email addresses"
+ *                                  (choose Verified if offered)
+ * 4. Add three questions, in this order:
+ *      Q1  Short answer   "Roll number"            → Required
+ *      Q2  File upload    "Your files"             → Required
+ *            • allow up to 5 files, 100 MB each
+ *            • accept any file type
+ *      Q3  Paragraph      "Assumptions and sources" → not required
+ * 5. Close the form. Leave it in My Drive; the script will find it by name.
  *
- * HOW TO RUN
- *   1. script.google.com -> your AM5061 Portal project (or a new one)
- *   2. Files -> + -> Script -> name it MakeForms -> paste this in
- *   3. Select makeAllForms in the dropdown -> Run -> authorise
- *   4. Copy the links from the execution log
- *
- * Re-running is safe: it skips any deliverable whose form already exists.
+ * ── STEP 2 ────────────────────────────────────────────────────────────
+ * Select makeAllForms → Run. Links print in the Execution log.
+ * Re-running is safe: it skips deliverables whose form already exists.
  */
 
-var COURSE_FOLDER = 'AM5061 Jul-Nov 2026';
+var COURSE_FOLDER   = 'AM5061 Jul-Nov 2026';
+var TEMPLATE_NAME   = 'AM5061 Submission TEMPLATE';
 var FORMS_SUBFOLDER = '06_Submissions';
+var RESPONSES_NAME  = 'AM5061 Submissions (Forms)';
 
 var DELIVERABLES = [
   ['D-1',  1, 'The 28 kW dairy pasteurisation heat pump'],
@@ -59,126 +65,127 @@ function _childFolder_(parent, name) {
   return it.hasNext() ? it.next() : parent.createFolder(name);
 }
 
-function makeAllForms() {
-  var course = _courseFolder_();
-  var subs   = _childFolder_(course, FORMS_SUBFOLDER);
-  var formsFolder = _childFolder_(subs, '_Forms');
+function _template_() {
+  var it = DriveApp.getFilesByName(TEMPLATE_NAME);
+  if (!it.hasNext()) {
+    throw new Error(
+      'Template not found. Create a form called exactly "' + TEMPLATE_NAME +
+      '" with a Roll number question, a FILE UPLOAD question and a paragraph ' +
+      'question, then run this again. See the header of this file for the steps.');
+  }
+  return it.next();
+}
 
-  // one spreadsheet collects every deliverable, one tab each
-  var ssName = 'AM5061 Submissions (Forms)';
-  var ssIt = _childFolder_(course, '00_Admin').getFilesByName(ssName);
-  var ss;
+/** Confirms the template is usable BEFORE creating fourteen copies of a mistake. */
+function checkTemplate() {
+  var f = FormApp.openById(_template_().getId());
+  var items = f.getItems();
+  var kinds = items.map(function (i) { return i.getType().toString(); });
+  var hasUpload = kinds.indexOf('FILE_UPLOAD') !== -1;
+  Logger.log('Template: "' + f.getTitle() + '"');
+  Logger.log('Questions: ' + kinds.join(', '));
+  Logger.log('Collects email: ' + f.collectsEmail());
+  Logger.log(hasUpload
+    ? 'FILE UPLOAD present. Good — run makeAllForms.'
+    : 'NO FILE UPLOAD QUESTION. Add one in the Forms editor before continuing.');
+  return hasUpload;
+}
+
+function makeAllForms() {
+  var course      = _courseFolder_();
+  var subs        = _childFolder_(course, FORMS_SUBFOLDER);
+  var formsFolder = _childFolder_(subs, '_Forms');
+  var admin       = _childFolder_(course, '00_Admin');
+  var tmplFile    = _template_();
+
+  if (!checkTemplate()) {
+    throw new Error('Template has no file-upload question. Add one, then re-run.');
+  }
+
+  // one spreadsheet, one tab per deliverable
+  var ss, ssIt = admin.getFilesByName(RESPONSES_NAME);
   if (ssIt.hasNext()) {
     ss = SpreadsheetApp.open(ssIt.next());
   } else {
-    ss = SpreadsheetApp.create(ssName);
-    var f = DriveApp.getFileById(ss.getId());
-    _childFolder_(course, '00_Admin').addFile(f);
-    DriveApp.getRootFolder().removeFile(f);
+    ss = SpreadsheetApp.create(RESPONSES_NAME);
+    var sf = DriveApp.getFileById(ss.getId());
+    admin.addFile(sf);
+    DriveApp.getRootFolder().removeFile(sf);
   }
 
   var lines = [];
   DELIVERABLES.forEach(function (d) {
     var code = d[0], week = d[1], title = d[2];
-    var formName = 'AM5061 ' + code + ' submission';
+    var name = 'AM5061 ' + code + ' submission';
 
-    var existing = formsFolder.getFilesByName(formName);
+    var existing = formsFolder.getFilesByName(name);
     if (existing.hasNext()) {
-      var ef = FormApp.openById(existing.next().getId());
-      lines.push(code + '  (already existed)  ' + ef.getPublishedUrl());
+      lines.push(code + '  (already existed)  ' +
+                 FormApp.openById(existing.next().getId()).getPublishedUrl());
       return;
     }
 
-    var form = FormApp.create(formName);
+    // A COPY keeps the file-upload question that Apps Script cannot create.
+    var copy = tmplFile.makeCopy(name, formsFolder);
+    var form = FormApp.openById(copy.getId());
+
     form.setTitle('AM5061 · ' + code + ' — Week ' + week)
         .setDescription(title + '\n\n' +
-          'Sign in with your IIT Madras Google account. ' +
-          'Upload your workbook and any supporting files. ' +
-          'You may submit more than once; the latest submission is the one marked.')
-        .setCollectEmail(true)
+          'Sign in with your IIT Madras Google account. Upload your workbook ' +
+          'and any supporting files. You may submit more than once; the latest ' +
+          'submission is the one marked.')
         .setAllowResponseEdits(true)
-        .setLimitOneResponsePerUser(false)
         .setProgressBar(false);
 
-    form.addTextItem()
-        .setTitle('Roll number')
-        .setHelpText('Exactly as on your ID card, e.g. AM25M017')
-        .setRequired(true);
-
-    // File upload FORCES Google sign-in. That is what makes this work on a
-    // personal account where the portal's identity call does not.
-    form.addFileUploadItem()
-        .setTitle(code + ' — your files')
-        .setHelpText('The Excel workbook is required. Add your notebook or a ' +
-                     'PDF report if the brief asks for one.')
-        .setNumberOfFiles(5)
-        .setMaxFileSize(100 * 1024 * 1024)   // 100 MB each
-        .setRequired(true);
-
-    form.addParagraphTextItem()
-        .setTitle('Assumptions and sources')
-        .setHelpText('Anything the marker needs to know: property source, ' +
-                     'assumed values, correlations used and where they came from.')
-        .setRequired(false);
-
     form.setDestination(FormApp.DestinationType.SPREADSHEET, ss.getId());
-
-    // file it away so the course folder stays tidy
-    var file = DriveApp.getFileById(form.getId());
-    formsFolder.addFile(file);
-    DriveApp.getRootFolder().removeFile(file);
-
     lines.push(code + '  ' + form.getPublishedUrl());
   });
 
   Logger.log('\n=== AM5061 submission form links ===\n' + lines.join('\n') +
              '\n\nResponses: ' + ss.getUrl() +
-             '\nUploads:   ' + subs.getUrl() +
-             '\n\nNEXT: set a closing date on each form (Settings -> Presentation)' +
-             '\n      or run closeForm("D-1") after the deadline.');
+             '\nForms:     ' + formsFolder.getUrl() +
+             '\n\nNEXT: set a closing date per form, or run closeForm("D-1").');
   return lines;
 }
 
-/** Close one deliverable after its deadline. */
+/** Stop accepting responses for one deliverable. */
 function closeForm(code) {
-  var course = _courseFolder_();
-  var formsFolder = _childFolder_(_childFolder_(course, FORMS_SUBFOLDER), '_Forms');
+  var formsFolder = _childFolder_(_childFolder_(_courseFolder_(), FORMS_SUBFOLDER), '_Forms');
   var it = formsFolder.getFilesByName('AM5061 ' + code + ' submission');
   if (!it.hasNext()) throw new Error('No form for ' + code);
-  var form = FormApp.openById(it.next().getId());
-  form.setAcceptingResponses(false)
-      .setCustomClosedFormMessage('AM5061 ' + code + ' is closed. ' +
-        'Contact the instructor if you need a late submission considered.');
+  FormApp.openById(it.next().getId())
+    .setAcceptingResponses(false)
+    .setCustomClosedFormMessage('AM5061 ' + code + ' is closed. Contact the ' +
+      'instructor if you need a late submission considered.');
   Logger.log(code + ' closed.');
 }
 
-/** Who has not submitted a given deliverable. Reads the Roster tab if present. */
+/** Roll numbers with no submission, using the Roster tab of the Control Sheet. */
 function whoIsMissing(code) {
-  var course = _courseFolder_();
-  var ssIt = _childFolder_(course, '00_Admin')
-               .getFilesByName('AM5061 Submissions (Forms)');
+  var admin = _childFolder_(_courseFolder_(), '00_Admin');
+  var ssIt = admin.getFilesByName(RESPONSES_NAME);
   if (!ssIt.hasNext()) throw new Error('Responses spreadsheet not found');
-  var ss = SpreadsheetApp.open(ssIt.next());
 
   var submitted = {};
-  ss.getSheets().forEach(function (sh) {
+  SpreadsheetApp.open(ssIt.next()).getSheets().forEach(function (sh) {
     if (sh.getName().indexOf(code) === -1) return;
     var v = sh.getDataRange().getValues();
     for (var i = 1; i < v.length; i++) {
-      var roll = String(v[i][2] || '').trim().toUpperCase();
-      if (roll) submitted[roll] = true;
+      for (var c = 0; c < v[i].length; c++) {
+        var cell = String(v[i][c] || '').trim().toUpperCase();
+        if (/^[A-Z]{2}\d{2}[A-Z]\d{3}$/.test(cell)) { submitted[cell] = true; break; }
+      }
     }
   });
 
-  var ctrl = _childFolder_(course, '00_Admin').getFilesByName('AM5061 Control Sheet');
+  var ctrl = admin.getFilesByName('AM5061 Control Sheet');
   if (!ctrl.hasNext()) {
     Logger.log('Submitted for ' + code + ': ' + Object.keys(submitted).join(', '));
     return;
   }
   var roster = SpreadsheetApp.open(ctrl.next()).getSheetByName('Roster');
   if (!roster) { Logger.log('No Roster tab.'); return; }
-  var rows = roster.getDataRange().getValues();
-  var missing = [];
+  var rows = roster.getDataRange().getValues(), missing = [];
   for (var j = 1; j < rows.length; j++) {
     var r = String(rows[j][1] || '').trim().toUpperCase();
     var active = String(rows[j][5] || '').trim().toUpperCase();
